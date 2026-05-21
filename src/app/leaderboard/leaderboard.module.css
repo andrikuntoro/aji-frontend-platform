@@ -1,0 +1,43 @@
+.leaderboardWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 1rem;
+}
+
+.leaderboardGrid {
+  display: grid;
+  grid-template-columns: 60px 2fr 1.5fr 1fr 60px;
+  min-width: 650px;
+}
+
+.leaderboardCard {
+  padding: 2.5rem;
+  background-color: var(--surface);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.leaderboardHeader {
+  padding: 0 1.5rem 1rem 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.leaderboardItem {
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: transform 0.2s;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .leaderboardCard {
+    padding: 1.5rem 1rem;
+  }
+  .leaderboardWrapper {
+    margin-top: 0.5rem;
+  }
+}

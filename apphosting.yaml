@@ -1,0 +1,11 @@
+# apphosting.yaml
+runConfig:
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 80
+
+env:
+  - variable: NEXT_PUBLIC_BACKEND_URL
+    value: https://aji-ai-roleplay--aji-ai-roleplay-2026.asia-southeast1.hosted.app
