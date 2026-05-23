@@ -9,6 +9,8 @@ const BACKEND_URL = "https://aji-ai-roleplay--aji-ai-roleplay-2026.asia-southeas
 function LoginFormFields() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -33,26 +35,38 @@ function LoginFormFields() {
     setSuccess(null);
     setIsLoading(true);
 
-    // Simulate authenticating
     setTimeout(() => {
       const trimmedEmail = email.trim().toLowerCase();
-      
-      // Load registered users list
       const registeredList = JSON.parse(localStorage.getItem("aji_registered_users") || "[]");
-      const isCustomMember = registeredList.some((u: any) => u.email === trimmedEmail);
-      
-      if (trimmedEmail === "admin@aji.com" && password === "admin123") {
-        localStorage.setItem("aji_user", JSON.stringify({ email: trimmedEmail, role: "superadmin" }));
-        window.location.href = `${BACKEND_URL}/admin`;
-      } else if (
-        (trimmedEmail === "member@aji.com" && password === "member123") || 
-        isCustomMember
-      ) {
-        localStorage.setItem("aji_user", JSON.stringify({ email: trimmedEmail, role: "member" }));
-        router.push("/dashboard");
-      } else {
-        setError("Kredensial tidak valid. Silakan gunakan email terdaftar Anda.");
+
+      if (isRegistering) {
+        if (registeredList.some((u: any) => u.email === trimmedEmail) || trimmedEmail === "member@aji.com" || trimmedEmail === "admin@aji.com") {
+          setError("Email ini sudah terdaftar.");
+          setIsLoading(false);
+          return;
+        }
+        const newUser = { name, email: trimmedEmail, password };
+        localStorage.setItem("aji_registered_users", JSON.stringify([...registeredList, newUser]));
+        setIsRegistering(false);
+        setSuccess("Registrasi Berhasil! Pendaftaran AAJI Anda telah diterima. Silakan masuk.");
+        setPassword("");
         setIsLoading(false);
+      } else {
+        const isCustomMember = registeredList.some((u: any) => u.email === trimmedEmail && u.password === password);
+        
+        if (trimmedEmail === "admin@aji.com" && password === "admin123") {
+          localStorage.setItem("aji_user", JSON.stringify({ email: trimmedEmail, role: "superadmin" }));
+          window.location.href = `${BACKEND_URL}/admin`;
+        } else if (
+          (trimmedEmail === "member@aji.com" && password === "member123") || 
+          isCustomMember
+        ) {
+          localStorage.setItem("aji_user", JSON.stringify({ email: trimmedEmail, role: "member" }));
+          router.push("/dashboard");
+        } else {
+          setError("Kredensial tidak valid. Silakan gunakan email dan password yang benar.");
+          setIsLoading(false);
+        }
       }
     }, 800);
   };
@@ -86,6 +100,20 @@ function LoginFormFields() {
         </div>
       )}
 
+      {isRegistering && (
+        <div>
+          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: '0.5rem' }}>Nama Lengkap</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="input-field"
+            placeholder="Nama Anda"
+            required={isRegistering}
+          />
+        </div>
+      )}
+
       <div>
         <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: '0.5rem' }}>Email</label>
         <input
@@ -114,7 +142,7 @@ function LoginFormFields() {
         disabled={isLoading}
         className="btn btn-primary"
         style={{
-          marginTop: '1rem',
+          marginTop: '0.5rem',
           width: '100%',
           display: 'flex',
           alignItems: 'center',
@@ -136,9 +164,21 @@ function LoginFormFields() {
             <span>Memproses...</span>
           </>
         ) : (
-          "Masuk"
+          isRegistering ? "Daftar Sekarang" : "Masuk"
         )}
       </button>
+
+      <div style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.85rem' }}>
+        {isRegistering ? (
+          <span style={{ color: 'var(--text-muted)' }}>
+            Sudah punya akun? <button type="button" onClick={() => {setIsRegistering(false); setError(null); setSuccess(null);}} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', padding: 0 }}>Masuk</button>
+          </span>
+        ) : (
+          <span style={{ color: 'var(--text-muted)' }}>
+            Belum punya akun? <button type="button" onClick={() => {setIsRegistering(true); setError(null); setSuccess(null);}} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', padding: 0 }}>Daftar AAJI</button>
+          </span>
+        )}
+      </div>
     </form>
   );
 }
@@ -147,10 +187,10 @@ export default function Login() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--background)' }}>
       <div className="card" style={{ width: '100%', maxWidth: '400px', padding: '2rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
           <ShieldCheck size={48} color="var(--primary)" style={{ margin: '0 auto' }} />
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '1rem' }}>Selamat Datang</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Masuk untuk melanjutkan belajar</p>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '1rem' }}>Portal AAJI</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Sistem Akses Member & Superadmin</p>
         </div>
         
         <Suspense fallback={
