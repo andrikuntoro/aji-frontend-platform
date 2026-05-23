@@ -138,11 +138,12 @@ export function useRealtimeSession() {
 
       // ── MOCK MODE — no API key, run text simulation ────
       if (data.mode === "mock" || !data.ephemeralToken) {
-        store.setMockMode(true);
-        store.setConnectionState("active");
-        startTimer();
-        sendOpeningGreeting();
-        startInactivityWatcher();
+        if (data.warning) {
+          store.setError(data.warning);
+        } else {
+          store.setError("OPENAI_API_KEY is not configured on the server. Live voice mode requires a valid OpenAI API key.");
+        }
+        store.setConnectionState("error");
         return;
       }
 
@@ -317,6 +318,23 @@ export function useRealtimeSession() {
     else clientRef.current?.unmute();
   }, [store]);
 
+  // ── Switch to mock mode ────────────────────────────────
+  const switchToMockMode = useCallback(() => {
+    if (clientRef.current) {
+      clientRef.current.disconnect();
+      clientRef.current = null;
+    }
+    store.setMockMode(true);
+    store.setError(null);
+    store.setAiSpeaking(false);
+    store.setUserSpeaking(false);
+    store.setMuted(false);
+    store.setConnectionState("active");
+    startTimer();
+    sendOpeningGreeting();
+    startInactivityWatcher();
+  }, [store, startTimer, sendOpeningGreeting, startInactivityWatcher]);
+
   // ── Cleanup on unmount ─────────────────────────────────
   useEffect(() => {
     return () => {
@@ -325,5 +343,5 @@ export function useRealtimeSession() {
     };
   }, [stopAllTimers]);
 
-  return { startSession, endSession, toggleMute, sendMockMessage };
+  return { startSession, endSession, toggleMute, sendMockMessage, switchToMockMode };
 }

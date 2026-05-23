@@ -47,7 +47,7 @@ export default function RoleplayDemo() {
   } = useRealtimeStore();
 
   // ── Hook Actions ────────────────────────────────────
-  const { startSession, endSession, toggleMute, sendMockMessage } = useRealtimeSession();
+  const { startSession, endSession, toggleMute, sendMockMessage, switchToMockMode } = useRealtimeSession();
 
   // ── Fetch Custom Context from Backend Admin ─────────
   useEffect(() => {
@@ -607,6 +607,108 @@ export default function RoleplayDemo() {
         onMouseOut={(e) => e.currentTarget.style.color = "#94a3b8"}>
           <ArrowLeft size={16} /> Kembali ke Dashboard Utama
         </Link>
+      </div>
+    );
+  }
+
+  // ── Error state: show premium styled connection failed screen ──
+  if (connectionState === "error") {
+    return (
+      <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "3rem 2rem",
+        background: "radial-gradient(circle at top, #1e1b4b 0%, #0f172a 100%)",
+        color: "#ffffff",
+      }}>
+        <div style={{
+          width: "100%",
+          maxWidth: "500px",
+          backgroundColor: "rgba(30, 41, 59, 0.45)",
+          border: "2px solid rgba(239, 68, 68, 0.3)",
+          borderRadius: "1.25rem",
+          padding: "2.25rem",
+          backdropFilter: "blur(16px)",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.25), 0 0 20px rgba(239, 68, 68, 0.15)",
+          textAlign: "center"
+        }}>
+          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⚠️</div>
+          <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "1rem", color: "#fca5a5" }}>
+            Koneksi Gagal / Connection Failed
+          </h2>
+          <div style={{
+            borderRadius: "0.75rem",
+            border: "1px solid rgba(239, 68, 68, 0.3)",
+            backgroundColor: "rgba(239, 68, 68, 0.05)",
+            padding: "1rem",
+            textAlign: "left",
+            marginBottom: "1.5rem",
+          }}>
+            <p style={{ fontSize: "0.8rem", color: "#fca5a5", fontWeight: 700, margin: "0 0 0.5rem 0" }}>Detail Error:</p>
+            <p style={{ fontSize: "0.75rem", color: "#fecaca", fontFamily: "monospace", margin: 0, overflowWrap: "anywhere" }}>
+              {storeError || "Gagal membuat sesi suara realtime."}
+            </p>
+          </div>
+          <div style={{
+            borderRadius: "0.75rem",
+            border: "1px solid rgba(245, 158, 11, 0.2)",
+            backgroundColor: "rgba(245, 158, 11, 0.03)",
+            padding: "1rem",
+            textAlign: "left",
+            marginBottom: "1.75rem",
+          }}>
+            <p style={{ fontSize: "0.8rem", color: "#fcd34d", fontWeight: 700, margin: "0 0 0.5rem 0" }}>Kemungkinan Penyebab:</p>
+            <ul style={{ fontSize: "0.75rem", color: "#fef08a", margin: 0, paddingLeft: "1.2rem", lineHeight: "1.5" }}>
+              <li>OPENAI_API_KEY tidak valid, kedaluwarsa, atau kuota habis (401).</li>
+              <li>Izin mikrofon diblokir oleh peramban (browser).</li>
+              <li>Jaringan internet tidak stabil.</li>
+            </ul>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            <button
+              onClick={switchToMockMode}
+              style={{
+                width: "100%",
+                borderRadius: "0.75rem",
+                border: "none",
+                backgroundColor: "#3b82f6",
+                color: "#ffffff",
+                padding: "0.85rem 0",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                boxShadow: "0 4px 14px rgba(59, 130, 246, 0.4)",
+                transition: "background-color 0.2s",
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#2563eb"}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#3b82f6"}
+            >
+              Gunakan Mode Simulasi (Teks)
+            </button>
+            <button
+              onClick={handleResetSession}
+              style={{
+                width: "100%",
+                borderRadius: "0.75rem",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                color: "#e2e8f0",
+                padding: "0.85rem 0",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "background-color 0.2s",
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)"}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)"}
+            >
+              ← Kembali ke Pemilihan Skenario
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
