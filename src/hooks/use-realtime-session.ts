@@ -15,7 +15,7 @@ import { RealtimeClient } from "@/lib/realtime/webrtc-client";
 import { useRealtimeStore } from "@/stores/realtime-store";
 import { RealtimeSessionConfig } from "@/types/domain";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://aji-ai-roleplay--aji-ai-roleplay-2026.asia-southeast1.hosted.app";
 
 // Maps realtime store stage keys → respond-engine stage keys
 const REALTIME_TO_ENGINE: Record<string, string> = {
