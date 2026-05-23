@@ -165,7 +165,11 @@ export function AudioVisualizer({
           width: "140px",
           height: "140px",
           borderRadius: "50%",
-          background: theme.gradient,
+          background: personaName?.toLowerCase().includes("young professional")
+            ? "url(/avatar_young.png) center/cover no-repeat"
+            : personaName?.toLowerCase().includes("mature")
+              ? "url(/avatar_mature.png) center/cover no-repeat"
+              : theme.gradient,
           boxShadow: `0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 40px ${theme.glow}, inset 0 8px 16px rgba(255, 255, 255, 0.2), inset 0 -8px 16px rgba(0, 0, 0, 0.4)`,
           display: "flex",
           flexDirection: "column",
